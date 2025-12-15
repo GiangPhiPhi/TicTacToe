@@ -9,16 +9,16 @@ AI = -1
 
 class TicTacToe:
     def __init__(self, n):
-        self.n = n
+        self.n = n #nxn
         self.board = [[EMPTY for _ in range(n)] for _ in range(n)]
-        self.current_player = HUMAN
-
+        self.current_player = HUMAN #nguoi first
+    #selcet or remove nuoc di
     def make_move(self, r, c, player):
         self.board[r][c] = player
 
     def undo_move(self, r, c):
         self.board[r][c] = EMPTY
-
+    #board full yes or no
     def is_full(self):
         for row in self.board:
             if EMPTY in row:
@@ -44,14 +44,14 @@ class TicTacToe:
             if s == -n:
                 return AI
 
-        # main diagonal
+        # duong cheo chinh
         s = sum(self.board[i][i] for i in range(n))
         if s == n:
             return HUMAN
         if s == -n:
             return AI
 
-        # anti diagonal
+        # duong cheo phu
         s = sum(self.board[i][n - i - 1] for i in range(n))
         if s == n:
             return HUMAN
@@ -77,14 +77,15 @@ def minimax(game, depth, maximizing):
         return -1
     if game.is_full() or depth == 0:
         return 0
-
+    #AI (MAX)
     if maximizing:
         best = -math.inf
+        #check all nuoc di
         for r, c in game.available_moves():
-            game.make_move(r, c, AI)
-            val = minimax(game, depth - 1, False)
-            game.undo_move(r, c)
-            best = max(best, val)
+            game.make_move(r, c, AI) #AI danh (r,c)
+            val = minimax(game, depth - 1, False) #giam depth, toi luot human
+            game.undo_move(r, c)#return board ve vi tri cu
+            best = max(best, val) #chon nuoc di tot nhat trong (-1,1,0)
         return best
     else:
         best = math.inf
@@ -143,7 +144,7 @@ class TicTacToeGUI:
                     width=4,
                     height=2,
                     font=("Arial", 40),
-                    command=lambda r=i, c=j: self.human_move(r, c)
+                    command=lambda r=i, c=j: self.human_move(r, c) #khi bam ,goi human
                 )
                 btn.grid(row=i, column=j)
                 row.append(btn)
@@ -153,7 +154,7 @@ class TicTacToeGUI:
         self.info.grid(row=n, column=0, columnspan=n)
 
     def human_move(self, r, c):
-        if self.game.board[r][c] != EMPTY:
+        if self.game.board[r][c] != EMPTY: #o da chon thi ko cho chon
             return
 
         self.game.make_move(r, c, HUMAN)
@@ -168,11 +169,12 @@ class TicTacToeGUI:
     def ai_move(self):
         best_val = -math.inf
         best_move = None
-
+        #borad > 3 thi depth=9
         depth = 9 if self.n <= 3 else 3
 
         for r, c in self.game.available_moves():
             self.game.make_move(r, c, AI)
+            #so sanh
             if self.use_alpha_beta:
                 val = alphabeta(self.game, depth, -math.inf, math.inf, False)
             else:
@@ -228,3 +230,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
